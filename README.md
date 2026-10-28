@@ -18,23 +18,49 @@ Brand files (logo, mark, PNGs and the full kit zip) are in `brand/`, copied
 from the Cutfish brand pack (concept A2). Colors: Ink `#0E1A2B`, Coral
 `#FF5B3A`. Type: Bricolage Grotesque (display), IBM Plex Sans and Mono.
 
-## Before it goes live
+## Before it goes live (handoff for Krishna, Oct 27)
 
-Everything highlighted in yellow on the site (class `todo`) needs a real value:
+The content is done: AI-native positioning, private beta, the flowchart, no vendor or model names, and a share image (`brand/cutfish-share-card.png`). What's left needs decisions, a domain, or a reviewer.
 
-- [ ] Legal company name and registered address (privacy, terms)
-- [ ] Contact emails: `partners@vygor.health` for now (Oct 27); swap in Cutfish addresses once the domain has email
-- [ ] Effective date and last-updated date (privacy, terms)
-- [ ] App hosting provider (privacy, section 5)
-- [ ] Governing law and venue (terms, section 16)
-- [ ] Have someone qualified review the privacy policy and terms
-- [ ] Once the domain is known, add `<link rel="canonical">` and absolute `og:image` URLs
+### 1. Decide
 
-Find them all with:
+- [ ] **Domain** for Cutfish. Nothing on the site depends on it until step 3.
+- [ ] **Hosting: Vercel, from this private repo** (recommended). GitHub Pages on the free plan needs a public repo, and this repo's first two commits name the tools we've stopped naming publicly. If it ever goes public, push a fresh single commit to a new repo instead of this history.
+- [ ] **Company entity** that operates Cutfish. It fills the legal blanks below.
+
+### 2. Fill the yellow blanks (class `todo`)
+
+| What | Where |
+|---|---|
+| Legal company name | `privacy.html` (intro and Contact), `terms.html` (intro and Contact) |
+| Registered address | same four places |
+| Effective date and last-updated date | top of `privacy.html` and `terms.html` (use the launch date) |
+| App hosting provider | `privacy.html` §5 table (AWS is the current plan for the app) |
+| Governing law and venue | `terms.html` §16 (usually the state of incorporation) |
+
+- [ ] Have someone qualified review the privacy policy and terms. AI providers are described by category ("AI model providers", "AI video tools"), not by name.
+
+Find every blank with:
 
 ```bash
-grep -rn 'class="todo"\|cutfish.example' --include=*.html .
+grep -rn 'class="todo"' --include=*.html .
 ```
+
+### 3. Once the domain exists
+
+- [ ] Add the domain in Vercel (Project → Settings → Domains) and set the DNS records it shows. HTTPS is automatic.
+- [ ] **Email:** create Cutfish addresses (e.g. `hello@` and `privacy@`), then replace `partners@vygor.health` everywhere. It's a stand-in, and it links Cutfish to Vygor publicly: `grep -rn 'partners@vygor.health' --include=*.html .`
+- [ ] **Absolute URLs for share previews:** change `og:image` on every page from `/brand/cutfish-share-card.png` to `https://<domain>/brand/cutfish-share-card.png`. Add `<link rel="canonical" href="https://<domain>/...">` to each page.
+- [ ] Add `sitemap.xml` and a `Sitemap:` line in `robots.txt`.
+- [ ] Give the live `/privacy` and `/terms` URLs to the TikTok API for Business application and the Google app review.
+
+### 4. Optional
+
+- [ ] An invite form instead of the email button (e.g. a form service or a small endpoint on the app), so requests land in one place.
+
+### Keep it confidential
+
+- Don't add vendor or model names, internal plans, pricing per action, or customer numbers to this repo. It's the public site's source.
 
 ## Preview locally
 
@@ -46,7 +72,7 @@ Then open http://localhost:4100 (clean URLs like `/brand` need `brand.html` loca
 
 ## Deploy on Vercel from GitHub
 
-1. Push this folder to the GitHub repo for the website.
+1. The repo is `Serebrum-LoseDaFat/cutfish-website` (private).
 2. In Vercel: Add New → Project → import the repo. Framework preset: **Other**. No build command, output directory `.` (the repo root).
 3. Add the Cutfish domain under Project → Settings → Domains, and set the DNS records Vercel shows.
 
