@@ -23,7 +23,7 @@ from the Cutfish brand pack (concept A2). Colors: Ink `#0E1A2B`, Coral
 Everything highlighted in yellow on the site (class `todo`) needs a real value:
 
 - [ ] Legal company name and registered address (privacy, terms)
-- [ ] Contact emails: replace `hello@cutfish.example` and `privacy@cutfish.example` everywhere
+- [ ] Contact emails: `partners@vygor.health` for now (Oct 27); swap in Cutfish addresses once the domain has email
 - [ ] Effective date and last-updated date (privacy, terms)
 - [ ] App hosting provider (privacy, section 5)
 - [ ] Governing law and venue (terms, section 16)
