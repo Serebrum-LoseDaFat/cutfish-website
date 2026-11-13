@@ -16,7 +16,12 @@ Plain HTML and one stylesheet, with no build step. Vercel serves it as-is.
 
 Brand files (logo, mark, PNGs and the full kit zip) are in `brand/`, copied
 from the Cutfish brand pack (concept A2). Colors: Ink `#0E1A2B`, Coral
-`#FF5B3A`. Type: Bricolage Grotesque (display), IBM Plex Sans and Mono.
+`#FF5B3A`. Type: Bricolage Grotesque (display), IBM Plex Sans and Mono. The site
+uses the black theme and the black app icons and favicons.
+
+**Deploys:** a push to `main` deploys only if the commit's author is `partners-arch`.
+Vercel blocks commits by anyone else on this project (it shows "Deployment was
+blocked" on the commit).
 
 ## Before it goes live (handoff for Krishna, Oct 27)
 
