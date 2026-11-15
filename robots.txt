@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /app-preview
 
 Sitemap: https://www.cut.fish/sitemap.xml

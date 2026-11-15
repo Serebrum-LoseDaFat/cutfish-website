@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Cutfish app preview</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Static preview of the Cutfish app for Krishna: the app's left menu, a guided
+   walkthrough of one reel's path, sample data, nothing saved. Built Nov 13. */
+:root{
+  --bg:#0c1118; --surface:#131a24; --surface2:#1a2330; --line:#253042; --ink:#e8edf4; --muted:#93a0b4;
+  --coral:#ff5b3a; --coral-ink:#ff8466; --coral-soft:rgba(255,91,58,.14);
+  --good:#4ade80; --good-soft:rgba(74,222,128,.13); --warn:#f5b84b; --warn-soft:rgba(245,184,75,.14);
+  --blue:#8fa2ff; --blue-soft:rgba(143,162,255,.14); --bad:#f87171;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--coral-ink)}
+:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+p{margin:0}
+
+/* preview banner + walkthrough bar */
+.banner{position:sticky;top:0;z-index:20;background:#1d1410;border-bottom:1px solid rgba(255,91,58,.35);padding:8px max(16px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:13px}
+.banner b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--coral-ink)}
+.banner span{color:#e9c9bd}
+.walk{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto}
+.walk .steps{display:flex;gap:4px;flex-wrap:wrap}
+.walk .steps button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:2px 9px;font-size:12px;color:var(--muted)}
+.walk .steps button.on{background:var(--coral);border-color:var(--coral);color:#fff}
+.walk .steps button.done{color:var(--ink)}
+.btn{border:1px solid var(--line);background:var(--surface2);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600}
+.btn:hover{border-color:var(--muted)}
+.btn.p{background:var(--coral);border-color:var(--coral);color:#fff}
+.btn.s{padding:3px 9px;font-size:12px}
+
+/* app shell */
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100vh - 41px)}
+nav.side{border-right:1px solid var(--line);background:var(--surface);padding:14px 10px;display:flex;flex-direction:column;gap:12px;position:sticky;top:41px;height:calc(100vh - 41px);overflow:auto}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:17px;padding:2px 6px}
+.logo i{width:24px;height:24px;border-radius:7px;background:var(--coral);display:grid;place-items:center;font-style:normal;color:#fff;font-size:12px}
+.co{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--bg);border-radius:9px;padding:3px}
+.co span{text-align:center;font-size:12px;padding:5px;border-radius:7px;color:var(--muted)}
+.co span.on{background:var(--surface2);color:var(--ink);font-weight:600}
+.grp{display:flex;flex-direction:column;gap:1px}
+.grp .gl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:4px 8px}
+.nav{display:flex;align-items:center;gap:8px;border:0;background:none;text-align:left;padding:6px 8px;border-radius:7px;font-size:14px;color:var(--ink)}
+.nav:hover{background:var(--surface2)}
+.nav.on{background:var(--coral-soft);color:var(--coral-ink);font-weight:600}
+.nav .dot{margin-left:auto;width:6px;height:6px;border-radius:99px;background:var(--warn)}
+.side .me{margin-top:auto;font-size:12px;color:var(--muted);padding:6px 8px;border-top:1px solid var(--line)}
+main{min-width:0;padding:20px max(16px,env(safe-area-inset-right,0px)) 60px 24px}
+.top{display:flex;justify-content:flex-end;gap:12px;font-size:12px;color:var(--muted);margin-bottom:10px}
+.screen{display:none;max-width:1040px}
+.screen.on{display:block}
+.ph{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin-bottom:14px}
+.ph h1{font-size:24px}
+.ph p{color:var(--muted);font-size:14px;flex-basis:100%}
+.chip{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:2px 8px;white-space:nowrap}
+.chip.b{background:var(--good-soft);color:var(--good)}
+.chip.c{background:var(--blue-soft);color:var(--blue)}
+.chip.w{background:var(--warn-soft);color:var(--warn)}
+.chip.n{background:var(--surface2);color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.lab{font-size:12px;color:var(--muted)}
+.mini{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.mini b{font-weight:600}
+.mini span{color:var(--muted);font-size:14px}
+.ready{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-radius:9px;padding:9px 12px;font-size:14px}
+.ready.ok{background:var(--good-soft);color:var(--good)}
+.ready.no{background:var(--warn-soft);color:var(--warn)}
+.ready b{font-weight:600}
+.hook{font-family:var(--display);font-size:26px;line-height:1.25}
+.sent{font-size:17px;line-height:1.85}
+.sent u{text-decoration-style:dashed;text-decoration-color:var(--muted);text-underline-offset:5px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:2px 9px;color:var(--muted)}
+.av{width:28px;height:28px;border-radius:99px;background:var(--coral-soft);color:var(--coral-ink);display:grid;place-items:center;font-size:12px;font-weight:600}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--blue);padding:4px 0 4px 10px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:8px 12px;border-bottom:3px solid transparent;font-size:14px;color:var(--muted);white-space:nowrap}
+.tabs button.on{border-bottom-color:var(--coral);color:var(--ink);font-weight:600}
+.tabs small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase}
+.posthead{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:6px}
+.posthead h1{font-size:21px;flex-basis:100%}
+
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .dh{font-family:var(--mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;padding:2px 4px}
+.cal .d{min-height:74px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 5px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.cal .d .n{font-size:11px;color:var(--muted)}
+.cal .d.peak .n::after{content:" · peak";color:var(--warn)}
+.cal .pc{font-size:11px;border-radius:5px;padding:2px 5px;background:var(--surface2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid var(--good)}
+.cal .pc.pr{border-left-color:var(--coral)}
+.cal .pc.en{border-left-color:var(--warn)}
+.cal .d.empty{opacity:.35}
+.cal .open{font-size:11px;color:var(--muted);border:1px dashed var(--line);border-radius:5px;padding:2px 5px}
+
+/* storyboard */
+.clip{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface)}
+.frame{aspect-ratio:9/16;width:100%;max-width:100%;background:#0a0d12;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;padding:6px 6px 16px;position:relative;text-align:center;font-size:11px;font-weight:600;line-height:1.25}
+.frame small{position:absolute;bottom:3px;left:0;right:0;font-family:var(--mono);font-size:9px;color:var(--muted);font-weight:400}
+.phone{width:min(240px,100%);aspect-ratio:9/16;border-radius:22px;border:6px solid #1f2733;background:linear-gradient(160deg,#3a2a1f,#1a1410 60%,#0d0a08);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:14px 12px}
+.phone .lbl{align-self:flex-start;font-size:10px;background:rgba(0,0,0,.6);border-radius:4px;padding:1px 6px}
+.phone .txt{font-family:var(--display);font-size:17px;text-align:center;text-shadow:0 2px 6px #000}
+.phone .cap{font-size:11px;text-align:center;color:#ffd9cc}
+.list{display:flex;flex-direction:column;gap:8px}
+.li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface)}
+.tick{width:26px;height:40px;border-radius:6px;display:grid;place-items:center;font-size:12px}
+.tick.y{background:var(--good-soft);color:var(--good)}
+.tick.n{border:1px dashed var(--line);color:var(--muted)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding:10px 4px 0;border-bottom:1px solid var(--line)}
+.bars div{flex:1;background:var(--coral-soft);border-top:3px solid var(--coral);border-radius:4px 4px 0 0;position:relative;min-width:0}
+.bars div span{position:absolute;top:-20px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.blabels{display:flex;gap:10px;padding:4px}
+.blabels span{flex:1;text-align:center;font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:8px;border-bottom:1px solid var(--line)}
+td{padding:8px;border-bottom:1px solid var(--line)}
+td.n{font-family:var(--mono);text-align:right}
+.board{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:8px;overflow-x:auto;padding-bottom:6px}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;min-width:150px}
+.col h3{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.pcard{background:var(--surface2);border-radius:8px;padding:7px 8px;font-size:12.5px;line-height:1.35}
+.pcard small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.welcome{max-width:880px;margin:0 auto;padding:28px 0}
+.welcome h1{font-size:clamp(28px,4vw,40px);line-height:1.1;margin-bottom:10px}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:18px 0}
+.flow button{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.flow button:hover{border-color:var(--coral)}
+.flow b{font-family:var(--display);font-size:15px}
+.flow span{font-size:12px;color:var(--muted)}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
+.toast.on{opacity:1}
+@media (max-width:900px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  nav.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;gap:6px;border-right:0;border-bottom:1px solid var(--line)}
+  nav.side .grp{flex-direction:row;flex-wrap:wrap}
+  nav.side .gl,.side .me,.co{display:none}
+  main{padding-left:max(16px,env(safe-area-inset-left,0px))}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .cal .pc{font-size:10px}
+  .walk{margin-left:0}
+}
+@media (max-width:760px){.banner{position:static}}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="banner" role="region" aria-label="Preview notice">
+  <b>App preview</b><span>Static mockup with sample data from Vygor's December plan. Buttons show what happens; nothing is saved.</span>
+  <div class="walk" aria-label="Walkthrough">
+    <div class="steps" id="steps"></div>
+    <button class="btn s" id="prev">← Back</button>
+    <button class="btn s p" id="next">Next →</button>
+  </div>
+</div>
+
+<div class="app">
+  <nav class="side" aria-label="App menu">
+    <div class="logo"><i>▶</i>cutfish</div>
+    <div class="co"><span class="on">Vygor</span><span>Demo co.</span></div>
+    <div class="grp"><button class="nav" data-go="home">Home</button><button class="nav" data-go="pipeline">Pipeline</button></div>
+    <div class="grp"><div class="gl">Plan</div><button class="nav" data-go="brand">Brand</button><button class="nav" data-go="research">Research<span class="dot"></span></button><button class="nav" data-go="planning">Planning</button></div>
+    <div class="grp"><div class="gl">Make</div><button class="nav" data-go="post-script">Scripts</button><button class="nav" data-go="avatars">Avatars<span class="dot"></span></button><button class="nav" data-go="post-video">Video Studio</button></div>
+    <div class="grp"><div class="gl">Ship</div><button class="nav" data-go="post-review">Review</button><button class="nav" data-go="post-publish">Publishing<span class="dot"></span></button><button class="nav" data-go="results">Results</button></div>
+    <div class="me">Signed in as Hajira (maker)</div>
+  </nav>
+
+  <main>
+    <div class="top"><span>AI budget: $0.66 of $10.00 this month</span><span>🔔 3</span></div>
+
+    <!-- WELCOME -->
+    <section class="screen" id="welcome" aria-labelledby="w-h">
+      <div class="welcome">
+        <span class="chip c">For Krishna · Nov 13, 2026</span>
+        <h1 id="w-h" style="margin-top:12px">One reel's path through Cutfish</h1>
+        <p style="color:var(--muted);font-size:16px;max-width:62ch">A clickable tour of the app as it stands, plus the screens coming before Jan 1. Use <b>Next</b> in the bar above, or jump to any step. Each screen is marked <span class="chip b">Built</span> or <span class="chip c">Coming</span> with its week.</p>
+        <div class="flow" id="flow"></div>
+        <div class="g3">
+          <div class="mini"><b>Demo 1 · Plan module</b><span>Fri Nov 20</span></div>
+          <div class="mini"><b>Demo 2 · Make module</b><span>Fri Dec 4</span></div>
+          <div class="mini"><b>Demo 3 · Ship module</b><span>Fri Dec 18, on the cloud app</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOME -->
+    <section class="screen" id="home" aria-labelledby="home-h">
+      <div class="ph"><h1 id="home-h">Home</h1><span class="chip b">Built</span><p>Each person's next steps across every post, theirs first.</p></div>
+      <div class="g2">
+        <div class="card stack"><h2 style="font-size:16px">Next up for you</h2>
+          <div class="list">
+            <div class="li"><span class="tick n">1</span><div><b>Make 2 clips</b><div class="lab">Holiday party plate strategy · due Fri</div></div><span class="chip w">Video</span></div>
+            <div class="li"><span class="tick n">2</span><div><b>Write the script</b><div class="lab">Lazy fibermaxxing: 3 add-ons · due Mon</div></div><span class="chip n">Script</span></div>
+            <div class="li"><span class="tick n">3</span><div><b>Enter views</b><div class="lab">Turkey Trot is live · due today</div></div><span class="chip n">Results</span></div>
+          </div></div>
+        <div class="card stack"><h2 style="font-size:16px">Needs attention</h2>
+          <div class="list">
+            <div class="li"><span class="tick n">!</span><div><b>TikTok approval pending</b><div class="lab">Sends go to the stand-in until it arrives</div></div><span class="chip w">Waiting</span></div>
+            <div class="li"><span class="tick n">!</span><div><b>Weekday and weekend guidance empty</b><div class="lab">Themes and cadence</div></div><span class="chip n">Setup</span></div>
+          </div></div>
+      </div>
+    </section>
+
+    <!-- PIPELINE -->
+    <section class="screen" id="pipeline" aria-labelledby="pipe-h">
+      <div class="ph"><h1 id="pipe-h">Pipeline</h1><span class="chip b">Built</span><p>Every post moves on by itself as its script, video and review get done. Nobody sets a status by hand.</p></div>
+      <div class="board">
+        <div class="col"><h3>Planned · 12</h3><div class="pcard">Energy-first holiday day<small>Dec 9 · Rachel</small></div><div class="pcard">Leftover rescue<small>Dec 27 · Jen</small></div></div>
+        <div class="col"><h3>Script · 6</h3><div class="pcard">Lazy fibermaxxing<small>Dec 3 · Rachel</small></div></div>
+        <div class="col"><h3>Video · 2</h3><div class="pcard" style="outline:1px solid var(--coral)">Holiday party plate strategy<small>Dec 1 · Rachel</small></div></div>
+        <div class="col"><h3>Review · 1</h3><div class="pcard">Snap the holiday spread<small>Nov 30 · Jen</small></div></div>
+        <div class="col"><h3>Ready · 0</h3></div>
+        <div class="col"><h3>On TikTok · 4</h3><div class="pcard">Turkey Trot is live<small>Nov 3 · 1,204 views</small></div></div>
+        <div class="col"><h3>Results · 28</h3><div class="pcard">Fun-size candy math<small>Oct 27 · 2,310 views</small></div></div>
+      </div>
+    </section>
+
+    <!-- BRAND -->
+    <section class="screen" id="brand" aria-labelledby="brand-h">
+      <div class="ph"><h1 id="brand-h">Brand</h1><span class="chip b">Built</span><p>Step 1. Enter the website; AI reads it and drafts the brand profile and audience for review.</p></div>
+      <div class="stack">
+        <div class="card row"><span class="lab">Website</span><b>vygor.health</b><button class="btn s" data-toast="AI reads the website and fills every section (about $0.03).">Read website again</button><span class="lab" style="margin-left:auto">✎ Edit · Save</span></div>
+        <div class="g2">
+          <div class="card stack"><div class="row"><h2 style="font-size:16px">Profile</h2><span class="chip c" style="margin-left:auto">AI draft</span></div>
+            <div><div class="lab">Value proposition</div><p>Snap a photo of any meal and get calories and macros in seconds, with an AI coach that adapts to your goals.</p></div>
+            <div><div class="lab">Claims we can make</div><div class="row"><span class="tag">Logs a meal from a photo</span><span class="tag">Free to start</span><span class="tag">AI recipes from your fridge</span></div></div>
+            <div><div class="lab">Never say</div><div class="row"><span class="tag" style="color:var(--bad)">cure</span><span class="tag" style="color:var(--bad)">guaranteed results</span><span class="tag" style="color:var(--bad)">lose 10 lbs fast</span></div></div>
+          </div>
+          <div class="card stack"><div class="row"><h2 style="font-size:16px">Audience (ICP)</h2><span class="chip c" style="margin-left:auto">AI draft</span></div>
+            <div><div class="lab">Who it's for</div><p>Busy adults 28–45 who've tried diets before and want something that fits real life, not a plan they'll quit.</p></div>
+            <div><div class="lab">Where they are on TikTok</div><p>Healthy-eating, "what I eat in a day", meal prep and holiday-season content.</p></div>
+            <div><div class="lab">What they're afraid of</div><p>Banning foods, starting over in January, tracking that takes too long.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section class="screen" id="research" aria-labelledby="res-h">
+      <div class="ph"><h1 id="res-h">Research</h1><span class="chip b">Built</span><span class="chip c">Paste from Creative Center · Week 3</span><p>Step 2. What's working in health on TikTok this month, and what it means for the brand. Any trend becomes an idea in one click.</p></div>
+      <div class="stack">
+        <div class="card row" style="border-style:dashed"><b>Paste from Creative Center</b><span class="lab">Paste a TikTok Creative Center page; AI turns it into trend rows and hashtags.</span><button class="btn s" style="margin-left:auto" data-toast="Coming in Week 3: paste a page and trends appear as drafts.">Paste a page</button></div>
+        <div class="g3">
+          <div class="mini"><b>No-ban holiday eating</b><span>"Eat the pie" content outperforms restriction. Lead with permission, then the plan.</span><button class="btn s" data-toast="Turned into a spare idea under the calendar.">Turn into idea</button></div>
+          <div class="mini"><b>Fibermaxxing</b><span>Adding fiber, not cutting carbs. Easy add-ons to any meal.</span><button class="btn s" data-toast="Turned into a spare idea under the calendar.">Turn into idea</button></div>
+          <div class="mini"><b>Duo guessing games</b><span>"Which has more protein?" formats get shares; the app is the reveal.</span><button class="btn s" data-toast="Turned into a spare idea under the calendar.">Turn into idea</button></div>
+        </div>
+        <div class="card stack"><div class="row"><h2 style="font-size:16px">Reference reels on a post</h2><span class="chip c">Week 1</span></div>
+          <p class="lab">Paste the TikTok reels a post should copy, with what to keep and change. The shot plan reads them.</p>
+          <div class="li"><span class="tick n">▶</span><div><b>tiktok.com/@… · "3 plates, 0 rules"</b><div class="lab">Hook: question in the first second · Audio: trending lo-fi · Keep: plate-by-plate reveal · Change: end on the app</div></div><span class="chip n">Reference</span></div>
+        </div>
+        <div class="row"><span class="lab">Hashtags this month:</span><span class="tag">#holidayeating</span><span class="tag">#fibermaxxing</span><span class="tag">#whatieatinaday</span><span class="tag">#mealprep</span></div>
+      </div>
+    </section>
+
+    <!-- PLANNING -->
+    <section class="screen" id="planning" aria-labelledby="plan-h">
+      <div class="ph"><h1 id="plan-h">Planning</h1><span class="chip b">Built</span><p>Step 3. AI picks the month's theme and fills every open posting day; drag a post to move it. Spare ideas wait under the calendar.</p></div>
+      <div class="tabs" role="tablist"><button class="on" data-plantab="cal">Calendar</button><button data-plantab="themes">Themes &amp; cadence</button></div>
+      <div id="plan-cal" class="stack">
+        <div class="row"><h2 style="font-size:18px">December 2026</h2><span class="lab">Theme: <b style="color:var(--ink)">Holiday party survival: no-ban eating + lazy fibermaxxing</b></span><button class="btn s p" style="margin-left:auto" data-toast="AI writes ideas for every open day (about $0.07), then you pick which days to fill.">Fill open slots with AI ideas</button></div>
+        <div class="cal" id="cal"></div>
+        <div class="card stack"><div class="row"><h2 style="font-size:16px">Spare ideas · 3</h2><span class="lab">AI writes a few more ideas than open days. Swap one onto a day.</span><button class="btn s" style="margin-left:auto" data-toast="Add an idea by hand; it waits here until it has a date.">+ Add an idea</button></div>
+          <div class="g3">
+            <div class="mini"><b>Host's cheat sheet: a balanced party plate</b><span>Hook: "Hosting? Do this first."</span><div class="row"><span class="chip n">Educational</span><span class="chip c">Idea from AI</span></div></div>
+            <div class="mini"><b>Guess the holiday plate</b><span>Hook: "Guess the calories. Wrong."</span><div class="row"><span class="chip w">Engagement</span><span class="chip c">Idea from AI</span></div></div>
+            <div class="mini"><b>Travel-day eating plan</b><span>Hook: "Airport food, sorted."</span><div class="row"><span class="chip n">Educational</span><span class="chip c">Idea from AI</span></div></div>
+          </div></div>
+      </div>
+      <div id="plan-themes" class="stack" hidden>
+        <div class="g4">
+          <div class="mini" style="opacity:.8"><div class="row"><b>October</b><span class="chip b" style="margin-left:auto">Done</span></div><span>Walktober steps challenge + high-protein meal prep</span><span class="lab">34 posts · 28 went out</span></div>
+          <div class="mini" style="border-color:var(--coral)"><div class="row"><b>November</b><span class="chip w" style="margin-left:auto">This month</span></div><span>Turkey Trot: maintain, don't gain</span><span class="lab">4 of 33 posts out so far</span></div>
+          <div class="mini"><div class="row"><b>December</b><span class="chip n" style="margin-left:auto">Next up</span></div><span>Holiday party survival: no-ban eating + lazy fibermaxxing</span><span class="lab">31 posts planned</span></div>
+          <div class="mini"><div class="row"><b>January</b><span class="chip n" style="margin-left:auto">Next up</span></div><span>Quitter's Day-proof resolutions: steady routines</span><span class="lab">20 posts planned</span></div>
+        </div>
+        <div class="card"><p class="sent">Posts go out on <b>every day</b> at <b>7:00 PM</b>, with <b>1</b> promotional post a week. <b>Hajira</b> makes them and <b>the reviewer</b> approves them.</p></div>
+      </div>
+    </section>
+
+    <!-- POST: shared header + tabs -->
+    <template id="posthead">
+      <div class="posthead"><span class="chip w">Video</span><span class="chip b">Educational</span><span class="lab">Tue, Dec 1 · 7:00 PM · @vygor.app · Rachel</span><h1>Holiday party plate strategy: build your plate in 3 steps without banning anything</h1></div>
+      <div class="tabs" role="tablist">
+        <button data-go="post-plan">Plan<small>built</small></button>
+        <button data-go="post-shots">Shot plan<small>wk 1</small></button>
+        <button data-go="post-script">Script<small>built</small></button>
+        <button data-go="post-stills">Stills<small>wk 2</small></button>
+        <button data-go="post-video">Video<small>built</small></button>
+        <button data-go="post-review">Review<small>built · score wk 4</small></button>
+        <button data-go="post-publish">Publish<small>stand-in · real wk 6</small></button>
+        <button data-go="results">Results<small>built</small></button>
+      </div>
+    </template>
+
+    <section class="screen" id="post-plan" aria-label="Post: Plan">
+      <div data-posthead></div>
+      <div class="stack">
+        <div class="ready ok"><b>✓ Ready for the script</b>Every detail the script needs is filled in.</div>
+        <div><div class="lab">First thing viewers see</div><p class="hook">"You can eat at the party. Here's how."</p></div>
+        <div><div class="lab">The post in one sentence</div><p class="sent">On <u>Tue, Dec 1, 7 PM</u>, <u>Rachel</u> talks to <u>busy adults who dread holiday buffets</u> about <u>building a plate in 3 steps without banning anything</u>, shows <u>photo meal logging</u>, and ends with <u>"I track mine in Vygor, the tracker's free"</u>.</p></div>
+        <div class="g3">
+          <div class="mini"><b>Who it's for</b><span>Busy adults who dread holiday buffets after past diets failed</span></div>
+          <div class="mini"><b>Why now</b><span>December party season; the no-ban message fits the month's theme</span></div>
+          <div class="mini"><b>What it shows</b><span>Photo meal logging, then "the tracker's free"</span></div>
+        </div>
+        <div class="row"><span class="av">R</span>Rachel<span class="chip b">Educational</span><span class="chip n">P1</span><span class="chip n">2 clips</span><span class="chip n">Tests the hook</span><span class="chip c">Idea from AI</span><button class="btn s" style="margin-left:auto" data-toast="Opens the full form; every underlined piece opens its own field.">Edit details</button></div>
+      </div>
+    </section>
+
+    <section class="screen" id="post-shots" aria-label="Post: Shot plan">
+      <div data-posthead></div>
+      <div class="stack">
+        <div class="note">Coming in Week 1 (Demo 1, Fri Nov 20). AI writes the reel shot by shot from the idea and the reference reels; the reviewer approves it before any images are made.</div>
+        <div class="row"><button class="btn s p" data-toast="AI drafts 4–8 shots: hook in shot 1, the brand only at the end.">Draft shot plan</button><button class="btn s" data-toast="Tell the AI what to change in plain words; it changes only that.">Redraft with your notes</button><span class="lab">Hook in shot 1 ✓ · brand only in the last shot ✓ · 10 s</span></div>
+        <div class="list">
+          <div class="li"><span class="tick n">1</span><div><b>Rachel at a holiday buffet, plate in hand, looks unsure</b><div class="lab">On screen: "You can eat at the party." · 2 s</div></div><button class="btn s" data-toast="Adjust just this shot with a note.">Adjust this</button></div>
+          <div class="li"><span class="tick n">2</span><div><b>She walks the whole table first</b><div class="lab">On screen: "Step 1: look first" · 3 s</div></div><button class="btn s" data-toast="Adjust just this shot with a note.">Adjust this</button></div>
+          <div class="li"><span class="tick n">3</span><div><b>Half the plate: veggies and protein</b><div class="lab">On screen: "Step 2: half veg + protein" · 3 s</div></div><button class="btn s" data-toast="Adjust just this shot with a note.">Adjust this</button></div>
+          <div class="li"><span class="tick n">4</span><div><b>Phone snaps the plate; the app logs it</b><div class="lab">On screen: "I track mine in Vygor" · 2 s</div></div><button class="btn s" data-toast="Adjust just this shot with a note.">Adjust this</button></div>
+        </div>
+        <div class="row"><button class="btn s p" data-toast="The reviewer approves; Home tells the maker to start the stills.">Send for approval</button></div>
+      </div>
+    </section>
+
+    <section class="screen" id="post-script" aria-label="Post: Script">
+      <div data-posthead></div>
+      <div class="stack">
+        <div class="ready no"><b>Before the video:</b>on-screen text in clip 2 is too long to read (keep it under 15 words).<button class="btn s" style="margin-left:auto" data-toast="Opens the editor on clip 2.">Fix it</button></div>
+        <div class="clip"><div class="frame">You can eat at the party. Here's how.<small>0:00</small></div><div class="stack" style="gap:8px"><div class="row"><b>Clip 1</b><span class="lab">0:00–0:10</span><span class="chip b">Hook lands in 3 seconds</span></div><div><div class="lab">What viewers hear</div><p>"You can eat at the party. Here's how. Step one: walk the whole table first. Step two: fill half your plate with veggies and protein."</p></div><div><div class="lab">What we see</div><p class="lab" style="font-size:14px">Rachel talking to camera, cozy holiday-party backdrop; step 1 and step 2 pop up as text.</p></div>
+          <div class="card" style="padding:10px;background:var(--surface2)"><div class="lab">Other ways to open</div><div class="row"><span>"Holiday buffet? Build your plate in 3 steps."</span><button class="btn s" data-toast="Hook swapped into clip 1.">Use this</button></div></div></div></div>
+        <div class="clip"><div class="frame">3 steps: 1) Scan the table 2) Veggies + protein first 3) Add your favorites…<small>0:10</small></div><div class="stack" style="gap:8px"><div class="row"><b>Clip 2</b><span class="lab">0:10–0:20</span></div><div><div class="lab">What viewers hear</div><p>"Step three: add a small scoop of the stuff you actually love. Nothing's banned. I track mine in Vygor, the tracker's free."</p></div><div><div class="lab">What we see</div><p class="lab" style="font-size:14px">Three fingers for step 3; quick cutaway of the app logging a party plate; end on Rachel smiling.</p></div></div></div>
+        <div class="row"><span class="lab">Hashtags:</span><span class="tag">#holidayparty</span><span class="tag">#mealplanning</span><span class="tag">#healthhabits</span><span class="tag">#dietstruggles</span><button class="btn s" style="margin-left:auto" data-toast="Redraft with your notes: tell the AI what to change (coming Week 1).">Redraft with AI</button><button class="btn s" data-toast="Each clip's fields, full width.">Edit script</button></div>
+      </div>
+    </section>
+
+    <section class="screen" id="post-stills" aria-label="Post: Stills">
+      <div data-posthead></div>
+      <div class="stack">
+        <div class="note">Coming in Week 2. One image prompt per shot, describing the avatar the same way every time from her reference portrait. The reviewer approves the stills before any clip is made.</div>
+        <div class="g4">
+          <div class="mini"><div class="frame" style="font-weight:400">Still 1<small>approved</small></div><span class="chip b">Approved</span></div>
+          <div class="mini"><div class="frame" style="font-weight:400">Still 2<small>approved</small></div><span class="chip b">Approved</span></div>
+          <div class="mini"><div class="frame" style="font-weight:400">Still 3<small>sent back</small></div><span class="chip w">Redo: plate too full</span></div>
+          <div class="mini"><div class="frame" style="font-weight:400">Still 4<small>approved</small></div><span class="chip b">Approved</span></div>
+        </div>
+        <div class="row"><button class="btn s" data-toast="Copies all four image prompts.">Copy all image prompts</button><button class="btn s" data-toast="Then each shot gets its motion prompt and tool.">Motion prompts →</button></div>
+      </div>
+    </section>
+
+    <section class="screen" id="post-video" aria-label="Post: Video">
+      <div data-posthead></div>
+      <div class="g2">
+        <div class="stack">
+          <p style="color:var(--good);font-weight:600">2 of 2 clips in. Ready to render below.</p>
+          <div class="list">
+            <div class="li"><span class="tick y">✓</span><div><b>Clip 1</b> · "You can eat at the party…"<div class="lab" style="color:var(--good)">Clip in (uploaded)</div></div><div class="row"><button class="btn s" data-toast="Swap the clip for a new MP4.">Replace</button><button class="btn s" data-toast="Plays the clip here.">Preview</button></div></div>
+            <div class="li"><span class="tick y">✓</span><div><b>Clip 2</b> · "Step three: add a small scoop…"<div class="lab" style="color:var(--good)">From the Drive folder</div></div><div class="row"><button class="btn s" data-toast="Swap the clip for a new MP4.">Replace</button><button class="btn s" data-toast="Plays the clip here.">Preview</button></div></div>
+          </div>
+          <div class="note">Coming in Week 3 (Demo 2, Fri Dec 4): clips on shots, trims, music, a loop, and real app screens as a shot.</div>
+          <button class="btn p" data-toast="Renders the finished 1080×1920 MP4 in the background.">Render video</button>
+          <div class="lab">Adds captions, on-screen text, the "AI-generated" label and the end card.</div>
+        </div>
+        <div class="stack" style="align-items:center">
+          <div class="phone" aria-label="Rendered video preview"><span class="lbl">AI-generated</span><div class="txt">You can eat at the party. Here's how.</div><div class="cap">step one: walk the whole table first</div></div>
+          <span class="lab">Rendered preview · 0:20</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="post-review" aria-label="Post: Review">
+      <div data-posthead></div>
+      <div class="g2">
+        <div class="card stack"><h2 style="font-size:16px">Checks</h2>
+          <div class="li"><span class="tick y">✓</span><div><b>Claims and numbers</b><div class="lab">Each one comes from the app or a cited source</div></div><span class="chip b">Pass</span></div>
+          <div class="li"><span class="tick n">!</span><div><b>Health topic</b><div class="lab">Flagged by the brand's review rules</div></div><span class="chip w">Dietitian</span></div>
+          <div class="li"><span class="tick y">✓</span><div><b>Banned wording</b><div class="lab">Nothing from the Never-say list</div></div><span class="chip b">Pass</span></div>
+          <label class="row" style="font-size:14px"><input type="checkbox" checked disabled> I confirm the AI label is on this video</label>
+          <div class="row"><button class="btn s" data-toast="Sends it back to the maker with a note.">Send back</button><button class="btn s p" data-toast="Approved: the post moves to Ready.">Approve</button></div>
+        </div>
+        <div class="card stack"><div class="row"><h2 style="font-size:16px">Reel score</h2><span class="chip c">Week 4</span></div>
+          <p class="hook" style="font-size:40px">86<span class="lab" style="font-size:14px"> / 100</span></p>
+          <div class="lab">Scored against the team's TikTok rules. Under 80, Send to TikTok stays locked; the reviewer can override with a reason.</div>
+          <div class="li"><span class="tick y">✓</span><div><b>Hook in the first second</b></div><span class="chip b">+15</span></div>
+          <div class="li"><span class="tick n">−</span><div><b>On-screen text readable</b><div class="lab">Clip 2 has 20 words</div></div><span class="chip w">−8</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="post-publish" aria-label="Post: Publish">
+      <div data-posthead></div>
+      <div class="card stack" style="max-width:640px">
+        <div class="row"><h2 style="font-size:16px">Send to TikTok drafts</h2><span class="chip w">Stand-in until approval</span><span class="chip c">Real drafts · Week 6</span></div>
+        <div class="g2"><div class="mini"><span class="lab">Account</span><b>Vygor Official · @vygor.app</b></div><div class="mini"><span class="lab">Sends today</span><b>2 of 15 · 5 min apart</b></div></div>
+        <div class="mini"><span class="lab">First comment</span><b>"Try it free: vygor.health" · wording rotates so it isn't hidden</b></div>
+        <button class="btn p" data-toast="Sent to the owner's TikTok drafts. They post it; the first comment is added.">Send to TikTok drafts</button>
+        <p class="lab">Nothing posts by itself. The account owner posts from the TikTok app, then Cutfish adds the first comment.</p>
+      </div>
+    </section>
+
+    <section class="screen" id="results" aria-labelledby="resu-h">
+      <div class="ph"><h1 id="resu-h">Results</h1><span class="chip b">Built</span><span class="chip c">Pulled from TikTok · Week 6</span><p>Step 8. Views, watch time and follows per post. From Week 7, next month's ideas learn from what worked.</p></div>
+      <div class="g2">
+        <div class="card"><div class="lab" style="margin-bottom:20px">Views, last 6 posts</div>
+          <div class="bars"><div style="height:62%"><span>2,310</span></div><div style="height:33%"><span>1,204</span></div><div style="height:20%"><span>740</span></div><div style="height:46%"><span>1,690</span></div><div style="height:12%"><span>431</span></div><div style="height:28%"><span>1,020</span></div></div>
+          <div class="blabels"><span>Candy math</span><span>Turkey Trot</span><span>Scale</span><span>Snack board</span><span>Fiber</span><span>Plate</span></div></div>
+        <div class="card"><table><thead><tr><th>Post</th><th style="text-align:right">Views</th><th style="text-align:right">Follows</th></tr></thead><tbody>
+          <tr><td>Fun-size candy math</td><td class="n">2,310</td><td class="n">14</td></tr>
+          <tr><td>Healthy snack board for kids</td><td class="n">1,690</td><td class="n">9</td></tr>
+          <tr><td>Turkey Trot is live</td><td class="n">1,204</td><td class="n">6</td></tr>
+          <tr><td>Why the scale isn't moving</td><td class="n">740</td><td class="n">3</td></tr>
+        </tbody></table><p class="lab" style="margin-top:8px">Sample numbers for the preview.</p></div>
+      </div>
+    </section>
+
+    <section class="screen" id="avatars" aria-labelledby="av-h">
+      <div class="ph"><h1 id="av-h">Avatars</h1><span class="chip b">Built</span><span class="chip c">Look fields + reference images · Week 2</span><p>The presenters, each with a niche, an audience and, from Week 2, a reference portrait so they look the same in every shot.</p></div>
+      <div class="g3">
+        <div class="mini"><div class="row"><span class="av">R</span><b>Rachel</b><span class="chip n" style="margin-left:auto">Educational</span></div><span>Nutrition tips · women 35–55</span><span class="lab">35–45, warm and practical, cozy kitchen</span></div>
+        <div class="mini"><div class="row"><span class="av">J</span><b>Jen</b><span class="chip n" style="margin-left:auto">Promotional</span></div><span>App walkthroughs · busy parents</span><span class="lab">30s, upbeat, bright apartment</span></div>
+        <div class="mini"><div class="row"><span class="av">B</span><b>Both</b><span class="chip n" style="margin-left:auto">Engagement</span></div><span>Duo games and guess-the-answer</span><span class="lab">Rachel and Jen together</span></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  var WALK = [
+    { id: 'welcome', t: 'Start' }, { id: 'brand', t: '1 Brand' }, { id: 'research', t: '2 Research' }, { id: 'planning', t: '3 Planning' },
+    { id: 'post-plan', t: '4 Plan' }, { id: 'post-shots', t: '5 Shot plan' }, { id: 'post-script', t: '6 Script' }, { id: 'post-stills', t: '7 Stills' },
+    { id: 'post-video', t: '8 Video' }, { id: 'post-review', t: '9 Review' }, { id: 'post-publish', t: '10 Publish' }, { id: 'results', t: '11 Results' }
+  ];
+  var FLOW_TXT = { brand: 'Website → AI profile and audience', research: 'Trends and reference reels', planning: 'Theme, a month of ideas, the calendar', 'post-plan': 'The post at a glance', 'post-shots': 'Shot by shot · Week 1', 'post-script': 'Storyboard with checks', 'post-stills': 'Approved images · Week 2', 'post-video': 'Clips in, render out', 'post-review': 'Checks and score', 'post-publish': 'Draft in TikTok', results: 'Views and what worked' };
+
+  // Post header and tabs on every post screen
+  var head = document.getElementById('posthead');
+  document.querySelectorAll('[data-posthead]').forEach(function (el) { el.appendChild(head.content.cloneNode(true)); });
+
+  var steps = document.getElementById('steps');
+  WALK.forEach(function (w, i) {
+    var b = document.createElement('button'); b.textContent = w.t; b.dataset.go = w.id; b.setAttribute('aria-label', 'Go to ' + w.t);
+    steps.appendChild(b);
+  });
+  var flow = document.getElementById('flow');
+  WALK.slice(1).forEach(function (w) {
+    var b = document.createElement('button'); b.dataset.go = w.id;
+    var x = document.createElement('b'); x.textContent = w.t; var y = document.createElement('span'); y.textContent = FLOW_TXT[w.id] || '';
+    b.appendChild(x); b.appendChild(y); flow.appendChild(b);
+  });
+
+  // December calendar (Mon-first), sample posts
+  var POSTS = { 1: ['Holiday party plate strategy', 'ed'], 2: ['Lazy fibermaxxing: 3 add-ons', 'ed'], 3: ['Snap the holiday spread', 'pr'], 4: ['Guess the holiday plate', 'en'], 5: ['Energy-first holiday day', 'ed'], 6: ['Gift-season protein snacks', 'ed'], 7: ['Why the scale jumps after a party', 'ed'], 8: ['Host\'s cheat sheet', 'ed'], 9: ['Office potluck snap-and-go', 'pr'], 10: ['Holiday dish: keep or swap?', 'en'], 11: ['Steady energy party plate', 'ed'], 12: ['Before the party: 60-second plan', 'ed'], 13: ['Leftover rescue lunch', 'ed'], 16: ['Fiber or no fiber?', 'en'], 20: ['"I ate the pie and I\'m fine"', 'ed'], 26: ['Travel-day eating', 'ed'], 27: ['Start your resolution today', 'pr'], 28: ['New Year\'s reset checklist', 'ed'], 30: ['Stricter plans are harder to keep', 'ed'], 31: ['One tiny habit for January', 'ed'] };
+  var cal = document.getElementById('cal');
+  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(function (d) { var h = document.createElement('div'); h.className = 'dh'; h.textContent = d; cal.appendChild(h); });
+  var first = new Date(Date.UTC(2026, 11, 1)).getUTCDay(); // Tue = 2
+  var lead = (first + 6) % 7;
+  for (var i = 0; i < lead; i++) { var e = document.createElement('div'); e.className = 'd empty'; cal.appendChild(e); }
+  for (var d = 1; d <= 31; d++) {
+    var c = document.createElement('div'); c.className = 'd';
+    var dow = new Date(Date.UTC(2026, 11, d)).getUTCDay(); if (dow === 6) c.className += ' peak';
+    var n = document.createElement('span'); n.className = 'n'; n.textContent = d; c.appendChild(n);
+    if (POSTS[d]) { var p = document.createElement('span'); p.className = 'pc ' + POSTS[d][1]; p.textContent = '7p ' + POSTS[d][0]; p.title = POSTS[d][0]; c.appendChild(p); }
+    else { var o = document.createElement('span'); o.className = 'open'; o.textContent = '+ Open slot'; c.appendChild(o); }
+    cal.appendChild(c);
+  }
+
+  // Planning sub-tabs
+  document.querySelectorAll('[data-plantab]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('[data-plantab]').forEach(function (x) { x.classList.toggle('on', x === b); });
+      document.getElementById('plan-cal').hidden = b.dataset.plantab !== 'cal';
+      document.getElementById('plan-themes').hidden = b.dataset.plantab !== 'themes';
+    });
+  });
+
+  // Router (hash), walkthrough and menu state
+  var ids = Array.prototype.map.call(document.querySelectorAll('.screen'), function (s) { return s.id; });
+  function show(id) {
+    if (ids.indexOf(id) < 0) id = 'welcome';
+    document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('on', s.id === id); });
+    document.querySelectorAll('.nav').forEach(function (n) { n.classList.toggle('on', n.dataset.go === id); });
+    document.querySelectorAll('.tabs [data-go]').forEach(function (t) { t.classList.toggle('on', t.dataset.go === id); });
+    var wi = WALK.findIndex(function (w) { return w.id === id; });
+    steps.querySelectorAll('button').forEach(function (b, i) { b.classList.toggle('on', i === wi); b.classList.toggle('done', wi > -1 && i < wi); });
+    document.getElementById('prev').disabled = wi <= 0;
+    document.getElementById('next').textContent = wi === WALK.length - 1 ? 'Start over' : 'Next →';
+    window.scrollTo(0, 0);
+  }
+  function go(id) { if (location.hash.slice(1) === id) show(id); else location.hash = id; }
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1)); });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go]'); if (t) { e.preventDefault(); go(t.dataset.go); return; }
+    var m = e.target.closest('[data-toast]'); if (m) { toast(m.dataset.toast); }
+  });
+  function cur() { var id = location.hash.slice(1) || 'welcome'; return WALK.findIndex(function (w) { return w.id === id; }); }
+  document.getElementById('next').addEventListener('click', function () { var i = cur(); go(WALK[i < 0 || i === WALK.length - 1 ? 0 : i + 1].id); });
+  document.getElementById('prev').addEventListener('click', function () { var i = cur(); if (i > 0) go(WALK[i - 1].id); });
+  var tt; function toast(msg) { var el = document.getElementById('toast'); el.textContent = 'Preview: ' + msg; el.classList.add('on'); clearTimeout(tt); tt = setTimeout(function () { el.classList.remove('on'); }, 2600); }
+  show(location.hash.slice(1) || 'welcome');
+})();
+</script>
+</body>
+</html>

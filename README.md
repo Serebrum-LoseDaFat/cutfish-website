@@ -82,3 +82,11 @@ Then open http://localhost:4100 (clean URLs like `/brand` need `brand.html` loca
 3. Add the Cutfish domain under Project → Settings → Domains, and set the DNS records Vercel shows.
 
 `vercel.json` turns on clean URLs (`/privacy` instead of `/privacy.html`) and a few security headers.
+
+## Private app preview (`/app-preview`)
+
+A static, clickable mockup of the Cutfish app for Krishna and investors: the app's menu and a step-by-step walkthrough of one reel's path (Brand → Research → Planning → Plan → Shot plan → Script → Stills → Video → Review → Publish → Results), with sample data and screens marked built or coming. It saves nothing and names no tools or models.
+
+- **File:** `app-preview/index.html` (one file, no build). URL: `https://www.cut.fish/app-preview`.
+- **Password:** `middleware.js` (Vercel Routing Middleware) asks for a username and password on `/app-preview` only; the rest of the site stays public. Set `PREVIEW_USER` and `PREVIEW_PASSWORD` in Vercel → Project → Settings → Environment Variables, then redeploy. Without them the preview stays locked for everyone. Never commit the password.
+- **Not indexed:** `robots.txt` disallows `/app-preview`, the page has `noindex`, and it isn't in the sitemap.
