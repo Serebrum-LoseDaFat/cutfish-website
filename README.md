@@ -31,7 +31,7 @@ The content is done: AI-native positioning, private beta, the flowchart, no vend
 
 - [x] **Domain:** live at https://www.cut.fish (Nov 7). `cut.fish` redirects to `www`.
 - [x] **Hosting: Vercel, from this private repo.** GitHub Pages on the free plan needs a public repo, and this repo's first two commits name the tools we've stopped naming publicly. If it ever goes public, push a fresh single commit to a new repo instead of this history.
-- [ ] **Company entity** that operates Cutfish. It fills the legal blanks below.
+- [x] **Company entity:** FedStat, LLC (Maryland). Legal blanks filled Nov 17, 2026.
 
 ### 2. Fill the yellow blanks (class `todo`)
 
@@ -54,7 +54,7 @@ grep -rn 'class="todo"' --include=*.html .
 ### 3. Once the domain exists
 
 - [x] Domain added in Vercel, with HTTPS.
-- [ ] **Email:** create Cutfish addresses (e.g. `hello@` and `privacy@`), then replace `partners@vygor.health` everywhere. It's a stand-in, and it links Cutfish to Vygor publicly: `grep -rn 'partners@vygor.health' --include=*.html .`
+- [x] **Email:** public contact is `krishna@serebrumhq.com` (Nov 17). Swap in Cutfish addresses (e.g. `hello@`, `privacy@`) once they exist. `partners@vygor.health` is still on the app-preview sign-in list in `middleware.js`.
 - [x] **Absolute URLs for share previews:** `og:image`, `og:url` and `<link rel="canonical">` point at `https://www.cut.fish/...` on every page.
 - [x] `sitemap.xml`, and a `Sitemap:` line in `robots.txt`.
 - [ ] Give https://www.cut.fish/privacy and https://www.cut.fish/terms to the TikTok API for Business application and the Google app review, **after the yellow blanks are filled**: both pages still show them publicly.
