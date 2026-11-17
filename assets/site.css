@@ -383,3 +383,23 @@ section { padding: 96px 0; }
   .results .loop-row span { position: static; transform: none; white-space: normal; background: none; padding: 0; }
   .results .loop-row span::before { content: "↺ "; }
 }
+
+/* Request-an-invite panel (assets/invite.js) */
+dialog.invite { width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto; padding: 26px; border: 1px solid var(--line); border-radius: 18px; background: var(--mist); color: var(--ink); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 91, 58, 0.15); }
+dialog.invite::backdrop { background: rgba(5, 8, 14, 0.7); backdrop-filter: blur(3px); }
+.invite h2 { font-size: 28px; margin-top: 6px; }
+.invite-lede { margin-top: 10px; color: var(--muted); font-size: 15.5px; }
+.invite-lede b { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.invite-close-form { position: absolute; top: 12px; right: 12px; margin: 0; }
+.invite-x { width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
+.invite-x:hover { border-color: var(--ink); }
+.invite-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.invite-opt { display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); text-decoration: none; font: inherit; cursor: pointer; transition: border-color 0.15s ease, transform 0.15s ease; }
+.invite-opt:hover { border-color: var(--coral); color: var(--ink); transform: translateY(-1px); }
+.invite-opt b { font-family: var(--display); font-size: 17px; font-weight: 600; }
+.invite-opt span { font-size: 13px; color: var(--muted); line-height: 1.35; }
+.invite-opt .addr { overflow-wrap: anywhere; }
+.invite-opt:first-child { border-color: rgba(255, 91, 58, 0.6); background: var(--coral-soft); }
+.invite-status { min-height: 1.4em; margin-top: 12px; font-family: var(--mono); font-size: 13px; color: var(--good); }
+@media (max-width: 420px) { .invite-opts { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .invite-opt { transition: none; } .invite-opt:hover { transform: none; } }
